@@ -1,0 +1,1 @@
+{"version":3,"sources":["index.scss"],"names":[],"mappings":"AAAA;EACI,YAAY;EACZ,aAAa;EACb,sBAAsB,EAAA","file":"wangEditor.min.css","sourcesContent":[".editor_frame {\n    width: 800px;\n    height: 400px;\n    border: 2px solid #ccc;\n}\n"]}
