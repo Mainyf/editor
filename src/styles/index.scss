@@ -1,5 +1,21 @@
+$border-color: #ccc;
+$topHeight: 30px;
+
 .editor_frame {
     width: 800px;
     height: 400px;
-    border: 2px solid #ccc;
+    .editor_top {
+        width: 100%;
+        height: $topHeight;
+        box-sizing: border-box;
+        border-top: 2px solid $border-color;
+        border-left: 2px solid $border-color;
+        border-right: 2px solid $border-color;
+    }
+    .editor_textarea {
+        width: 100%;
+        box-sizing: border-box;
+        height: 400px - $topHeight;
+        border: 2px solid #ccc;
+    }
 }
