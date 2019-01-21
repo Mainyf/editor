@@ -10,18 +10,21 @@ export class Editor {
         debug: false
     };
 
-    private _defaultEntrySelector = 'editorEntry';
-    private _editorFrameClassName = 'editor_frame';
-    private _editorTopClassName = 'editor_top';
-    private _editorTextareaClassName = 'editor_textarea';
+    private _defaultEntrySelector = 'editor';
+    private _classes = {
+        frame: 'editor-frame',
+        top: 'editor-top',
+        textarea: 'editor-textarea',
+        textareaContent: 'editor-textarea__content'
+    };
     private _frame?: HTMLElement = undefined;
     private _frameTop?: HTMLElement = undefined;
     private _frameTextarea?: HTMLElement = undefined;
 
     public init(entry: Element | HTMLElement) {
-        if(!entry) {
+        if (!entry) {
             let defaultEntry = document.getElementById(this._defaultEntrySelector);
-            if(!defaultEntry) {
+            if (!defaultEntry) {
                 throw new Error(`not find defaultEntry`);
             }
             entry = defaultEntry;
@@ -34,22 +37,25 @@ export class Editor {
 
     private _appendFrame(el: Element | HTMLElement): HTMLElement {
         const frame = document.createElement('div');
-        frame.classList.add(this._editorFrameClassName);
+        frame.classList.add(this._classes.frame);
         el.appendChild(frame);
         return frame;
     }
 
     private _appendFrameTop(el: Element | HTMLElement): HTMLElement {
         const frameTop = document.createElement('div');
-        frameTop.classList.add(this._editorTopClassName);
+        frameTop.classList.add(this._classes.top);
         el.appendChild(frameTop);
         return frameTop;
     }
 
     private _appendFrameTextrea(el: Element | HTMLElement): HTMLElement {
-        const frameTop = document.createElement('div');
-        frameTop.classList.add(this._editorTextareaClassName);
-        el.appendChild(frameTop);
-        return frameTop;
+        const textarea = document.createElement('div');
+        textarea.classList.add(this._classes.textarea);
+        const content = document.createElement('div');
+        content.classList.add(this._classes.textareaContent);
+        textarea.appendChild(content);
+        el.appendChild(textarea);
+        return textarea;
     }
 }

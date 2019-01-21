@@ -1,10 +1,10 @@
 $border-color: #ccc;
 $topHeight: 30px;
 
-.editor_frame {
+.editor-frame {
     width: 800px;
     height: 400px;
-    .editor_top {
+    .editor-top {
         width: 100%;
         height: $topHeight;
         box-sizing: border-box;
@@ -12,10 +12,13 @@ $topHeight: 30px;
         border-left: 2px solid $border-color;
         border-right: 2px solid $border-color;
     }
-    .editor_textarea {
+    .editor-textarea {
         width: 100%;
         box-sizing: border-box;
         height: 400px - $topHeight;
         border: 2px solid #ccc;
+        .editor-textarea__content {
+
+        }
     }
 }

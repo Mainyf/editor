@@ -9,10 +9,13 @@
             this._defaultOptions = {
                 debug: false
             };
-            this._defaultEntrySelector = 'editorEntry';
-            this._editorFrameClassName = 'editor_frame';
-            this._editorTopClassName = 'editor_top';
-            this._editorTextareaClassName = 'editor_textarea';
+            this._defaultEntrySelector = 'editor';
+            this._classes = {
+                frame: 'editor-frame',
+                top: 'editor-top',
+                textarea: 'editor-textarea',
+                textareaContent: 'editor-textarea__content'
+            };
             this._frame = undefined;
             this._frameTop = undefined;
             this._frameTextarea = undefined;
@@ -31,21 +34,24 @@
         };
         Editor.prototype._appendFrame = function (el) {
             var frame = document.createElement('div');
-            frame.classList.add(this._editorFrameClassName);
+            frame.classList.add(this._classes.frame);
             el.appendChild(frame);
             return frame;
         };
         Editor.prototype._appendFrameTop = function (el) {
             var frameTop = document.createElement('div');
-            frameTop.classList.add(this._editorTopClassName);
+            frameTop.classList.add(this._classes.top);
             el.appendChild(frameTop);
             return frameTop;
         };
         Editor.prototype._appendFrameTextrea = function (el) {
-            var frameTop = document.createElement('div');
-            frameTop.classList.add(this._editorTextareaClassName);
-            el.appendChild(frameTop);
-            return frameTop;
+            var textarea = document.createElement('div');
+            textarea.classList.add(this._classes.textarea);
+            var content = document.createElement('div');
+            content.classList.add(this._classes.textareaContent);
+            textarea.appendChild(content);
+            el.appendChild(textarea);
+            return textarea;
         };
         return Editor;
     }());
