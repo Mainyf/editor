@@ -4,16 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "tsc --watch",
-    "build": "tsc",
+    "start": "gulp default",
+    "build": "gulp build",
     "test": "jest"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/jest": "^23.3.12",
+    "@types/lodash": "^4.14.123",
     "autoprefixer": "^9.4.5",
-    "browser-sync": "^2.26.3",
+    "browser-sync": "^2.26.5",
     "del": "^3.0.0",
     "gulp": "^4.0.0",
     "gulp-concat": "^2.6.1",
@@ -26,12 +27,16 @@
     "gulp-uglify-es": "^1.0.4",
     "gulp-uglifycss": "^1.1.0",
     "jest": "^23.6.0",
-    "node-sass": "^4.11.0",
+    "node-sass": "^4.12.0",
     "rollup": "^1.1.0",
     "rollup-plugin-node-resolve": "^4.0.0",
-    "rollup-plugin-tslint": "^0.1.38",
+    "rollup-plugin-tslint": "^0.2.2",
     "rollup-plugin-typescript": "^1.0.0",
     "ts-jest": "^23.10.5",
     "typescript": "^3.2.2"
+  },
+  "dependencies": {
+    "lodash": "^4.17.11",
+    "sizzle": "^2.3.4"
   }
 }

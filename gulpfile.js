@@ -16,7 +16,7 @@ const
     del = require('del'),
     sass = require('gulp-sass'),
     tsProject = ts.createProject("tsconfig.json"),
-    moduleName = 'wangEditor',
+    moduleName = 'editor',
     sassFolder = './src/styles',
     srcFolder = './src',
     filePath = `./${getOutputFolderName()}/${moduleName}.js`;
@@ -67,6 +67,8 @@ gulp.task('script', () => {
         });
     });
 });
+
+gulp.task('build', gulp.series('clean', gulp.series('sass', 'script')));
 
 gulp.task('default', gulp.series('clean', gulp.series('sass', 'script', () => {
     browserSync.init({

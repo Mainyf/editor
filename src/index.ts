@@ -1,5 +1,5 @@
 import { Editor } from './editor-core';
+import 'sizzle';
 import './utils/polyfill/poly-fill';
 
-// @ts-ignore
-export default (window.wangEditor || new Editor());
+export default new Editor();
