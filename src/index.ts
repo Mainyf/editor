@@ -1,4 +1,4 @@
-import { Editor } from './editor-core';
+import { Editor } from '@src/core';
 import 'sizzle';
 import './utils/polyfill/poly-fill';
 
