@@ -1,7 +1,7 @@
 const gulp = require("gulp"),
-    webpack = require('webpack-stream'),
-    webpackConfig = require('./webpack.config'),
-    named = require('vinyl-named'),
+    webpack = require("webpack-stream"),
+    webpackConfig = require("./webpack.config"),
+    named = require("vinyl-named"),
     browserSync = require("browser-sync").create(),
     sourcemaps = require("gulp-sourcemaps"),
     uglify = require("gulp-uglify-es").default,
@@ -49,7 +49,8 @@ gulp.task("copy-fonts", () => {
 });
 
 function generateScript(webpackConfig) {
-    return gulp.src(`${srcFolder}/index.ts`)
+    return gulp
+        .src(`${srcFolder}/index.ts`)
         .pipe(named())
         .pipe(webpack(webpackConfig))
         .pipe(rename(`${moduleName}.js`))
@@ -62,18 +63,25 @@ function generateScript(webpackConfig) {
 }
 
 gulp.task("script", () => {
-    const config = {...{}, ...webpackConfig};
-    config.mode = 'development';
+    const config = { ...{}, ...webpackConfig };
+    config.mode = "development";
     return generateScript(config);
 });
 
 gulp.task(
     "build",
-    gulp.series("clean", gulp.series(() => {
-        const config = {...{}, ...webpackConfig};
-        config.mode = 'production';
-        return generateScript(config);
-    }, "sass", "copy-fonts"))
+    gulp.series(
+        "clean",
+        gulp.series(
+            () => {
+                const config = { ...{}, ...webpackConfig };
+                config.mode = "production";
+                return generateScript(config);
+            },
+            "sass",
+            "copy-fonts"
+        )
+    )
 );
 
 gulp.task(

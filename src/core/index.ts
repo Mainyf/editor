@@ -1,5 +1,5 @@
 import { DOMObject } from '../dom/domObject';
-import { Head } from './head';
+import { Head } from './head/head';
 import { Content } from './content';
 
 export interface IEditorOptions {
