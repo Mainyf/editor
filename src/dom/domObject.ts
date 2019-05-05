@@ -1,37 +1,88 @@
 import { isArray, isElement, every } from 'lodash';
 import Sizzle from 'sizzle';
-import { when, hasHTMLChar, convertDOM } from '../utils/utils';
-import { EventEmitter } from '@src/utils/eventEmitter';
+import { when, hasHTMLChar, convertDOM, makeMap } from '../utils/utils';
 
 export class DOMObject {
 
-    private _element: Element[] = [];
-    private eventEmitter: EventEmitter = new EventEmitter();
+    private readonly _element: Element[] = [];
 
     constructor(el: string | string[] | Element | Element[]) {
         this._element = this._convertElement(el);
-
     }
 
     public append(el: string | string[] | Element | Element[] | DOMObject): DOMObject {
         this._element.forEach((v) => {
             if (el instanceof DOMObject) {
-                for (const x of el._element) {
-                    v.append(x)
-                }
+                el._element.forEach((x) => v.append(x));
             } else {
                 let _el = this._convertElement(el);
-                // @ts-ignore
                 _el.forEach((x) => v.append(x));
             }
         });
         return this;
     }
 
-    // TODO add dom utils on method
-    public on(): DOMObject {
-
+    public on(eventName: string, selector: string, handle: Function): DOMObject {
+        this._element.forEach((v) => {
+            v.addEventListener(eventName, (e) => {
+                const $el = $(e.target as Element).closest(selector);
+                if (!$el.isEmpty()) {
+                    handle.call(null, $el.first(), e);
+                }
+            });
+        });
         return this;
+    }
+
+    public findFirst(selector: string): DOMObject {
+        return $(Sizzle.matches(this.findAll().toArray(), selector));
+    }
+
+    public findAll(): DOMObject {
+        return $(this._element.reduce((prev, curr) => prev.concat(this._findAll(curr)), []));
+    }
+
+    public closest(selector?: string): DOMObject {
+        const result = [];
+        const filter = makeMap('BODY,HTML');
+        this._element.forEach((v) => {
+            for (
+                let _el = v.parentElement;
+                !filter(_el.tagName) && (selector ? Sizzle.matchesSelector(_el, selector) : true);
+                _el = _el.parentElement
+            ) {
+                result.push(_el);
+                break;
+            }
+        });
+        return $(result);
+    }
+
+    public parents(): DOMObject {
+        return $(this._element.reduce((prev, curr) => prev.concat(this._parent(curr)), []));
+    }
+
+    private _findAll(el: Element): Element[] {
+        let result = [];
+        for (const v of el.children) {
+            const children = v.children;
+            if (children.length) {
+                result.push(v);
+                result = result.concat(this._findAll(v));
+            } else {
+                result.push(v);
+            }
+        }
+        return result;
+    }
+
+    private _parent(el: Element): Element[] {
+        const result = [];
+        const filter = makeMap('BODY,HTML');
+        for (let _el = el.parentElement; !filter(_el.tagName); _el = _el.parentElement) {
+            result.push(_el);
+        }
+        return result;
     }
 
     private _convertElement(el: string | string[] | Element | Element[]): Element[] {
@@ -82,9 +133,25 @@ export class DOMObject {
         return isArray(el) ? el : [el];
     }
 
+    private _push(el: Element) {
+        this._element.push(el);
+    }
+
     public forEach(predicate: (el: Element) => void): DOMObject {
         this._element.forEach(predicate);
         return this;
+    }
+
+    public first(): Element | undefined {
+        return this._element.length ? this._element[0] : undefined;
+    }
+
+    public end(): Element | undefined {
+        return this._element.length ? this._element[this._element.length - 1] : undefined;
+    }
+
+    public toArray(): Element[] {
+        return this._element;
     }
 
     public isEmpty(): boolean {

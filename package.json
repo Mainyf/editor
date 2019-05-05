@@ -15,7 +15,6 @@
     "@babel/preset-env": "^7.4.4",
     "@types/jest": "^23.3.12",
     "@types/lodash": "^4.14.123",
-    "@types/sizzle": "^2.3.2",
     "autoprefixer": "^9.4.5",
     "babel-loader": "^8.0.5",
     "browser-sync": "^2.26.5",

@@ -4,7 +4,8 @@ export function when(args: Array<{
     predicate: () => void,
     action: () => void
 }>) {
-    for (const v of args) {
+    for(const i in Object.keys(args)) {
+        const v = args[i];
         if (v.predicate.call(null)) {
             v.action.call(null);
             break;
@@ -45,4 +46,11 @@ export function randomStr(min, max) {
         str += arr[Math.round(Math.random() * (arr.length - 1))];
     }
     return str;
+}
+
+export function makeMap(strs: string): (str: string) => boolean {
+    const strings = strs.split(',');
+    return (str) => {
+        return strings.indexOf(str) !== -1;
+    }
 }

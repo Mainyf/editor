@@ -12,10 +12,10 @@ export class Head implements IEditorModule {
     constructor() {
         // @ts-ignore
         const buttonComponents = require.context('./buttons', false, /\.ts$/);
-        for (const v of buttonComponents.keys()) {
+        buttonComponents.keys().forEach((v) => {
             const button = buttonComponents(v)['default'];
             this.buttons.push(new button());
-        }
+        });
     }
 
 
@@ -23,11 +23,14 @@ export class Head implements IEditorModule {
         const result = document.createElement('div');
         result.className = this.headClass;
         const buttonContainer = $(`<ul class="${this.listContainerClass}"></ul>`);
-        for (const v of this.buttons) {
+        this.buttons.forEach((v) => {
             const key = `data-v${randomStr(5, 5)}`;
             buttonContainer.append($(`<li title="${v.text}" ${key}><i class="iconfont icon-${v.icon}"></i></li>`));
-
-        }
+        });
+        buttonContainer.on('click', 'li', (el, event) => {
+            console.log(el);
+            console.log(event);
+        });
         $(result).append(buttonContainer);
         return result;
     }

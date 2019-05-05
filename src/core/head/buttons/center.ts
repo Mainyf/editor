@@ -6,6 +6,6 @@ export default class Center implements IButton {
     icon: string = 'center';
 
     handle() {
-
+        console.log('click center')
     }
 }
