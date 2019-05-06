@@ -1,33 +1,46 @@
-import { isArray, isElement, every } from 'lodash';
-import Sizzle from 'sizzle';
-import { when, hasHTMLChar, convertDOM, makeMap } from '../utils/utils';
+import { isArray, isElement, every, isString, isFunction } from "lodash";
+import Sizzle from "sizzle";
+import { when, hasHTMLChar, convertDOM, makeMap } from "../utils/utils";
 
 export class DOMObject {
-
     private readonly _element: Element[] = [];
 
     constructor(el: string | string[] | Element | Element[]) {
         this._element = this._convertElement(el);
     }
 
-    public append(el: string | string[] | Element | Element[] | DOMObject): DOMObject {
-        this._element.forEach((v) => {
+    public append(
+        el: string | string[] | Element | Element[] | DOMObject
+    ): DOMObject {
+        this._element.forEach(v => {
             if (el instanceof DOMObject) {
-                el._element.forEach((x) => v.append(x));
+                el._element.forEach(x => v.append(x));
             } else {
                 let _el = this._convertElement(el);
-                _el.forEach((x) => v.append(x));
+                _el.forEach(x => v.append(x));
             }
         });
         return this;
     }
 
-    public on(eventName: string, selector: string, handle: Function): DOMObject {
-        this._element.forEach((v) => {
-            v.addEventListener(eventName, (e) => {
-                const $el = $(e.target as Element).closest(selector);
-                if (!$el.isEmpty()) {
-                    handle.call(null, $el.first(), e);
+    public on(
+        eventName: string,
+        selector: string | Function,
+        handle?: Function
+    ): DOMObject {
+        this._element.forEach(v => {
+            v.addEventListener(eventName, e => {
+                let _handle;
+                let $el;
+                if (isString(selector)) {
+                    $el = $(e.target as Element).closest(selector);
+                    _handle = handle;
+                } else if (isFunction(selector)) {
+                    $el = $(e.currentTarget as Element);
+                    _handle = selector as Function;
+                }
+                if ($el && !$el.isEmpty()) {
+                    _handle.call(null, $el.first(), e);
                 }
             });
         });
@@ -39,27 +52,36 @@ export class DOMObject {
     }
 
     public findAll(): DOMObject {
-        return $(this._element.reduce((prev, curr) => prev.concat(this._findAll(curr)), []));
+        return $(
+            this._element.reduce(
+                (prev, curr) => prev.concat(this._findAll(curr)),
+                []
+            )
+        );
     }
 
     public closest(selector?: string): DOMObject {
         const result = [];
-        const filter = makeMap('BODY,HTML');
-        this._element.forEach((v) => {
-            for (
-                let _el = v.parentElement;
-                !filter(_el.tagName) && (selector ? Sizzle.matchesSelector(_el, selector) : true);
-                _el = _el.parentElement
-            ) {
-                result.push(_el);
-                break;
-            }
-        });
+        const filter = makeMap("BODY,HTML");
+        for (
+            let _el = this.first().parentElement;
+            !filter(_el.tagName) &&
+            (selector ? Sizzle.matchesSelector(_el, selector) : true);
+            _el = _el.parentElement
+        ) {
+            result.push(_el);
+            break;
+        }
         return $(result);
     }
 
     public parents(): DOMObject {
-        return $(this._element.reduce((prev, curr) => prev.concat(this._parent(curr)), []));
+        return $(
+            this._element.reduce(
+                (prev, curr) => prev.concat(this._parent(curr)),
+                []
+            )
+        );
     }
 
     private _findAll(el: Element): Element[] {
@@ -78,55 +100,68 @@ export class DOMObject {
 
     private _parent(el: Element): Element[] {
         const result = [];
-        const filter = makeMap('BODY,HTML');
-        for (let _el = el.parentElement; !filter(_el.tagName); _el = _el.parentElement) {
+        const filter = makeMap("BODY,HTML");
+        for (
+            let _el = el.parentElement;
+            !filter(_el.tagName);
+            _el = _el.parentElement
+        ) {
             result.push(_el);
         }
         return result;
     }
 
-    private _convertElement(el: string | string[] | Element | Element[]): Element[] {
+    private _convertElement(
+        el: string | string[] | Element | Element[]
+    ): Element[] {
         let result: Element[] = [];
         when([
-                 {
-                     predicate: () => this._isString(el) && this._isHTMLChar(el as any),
-                     action: () => {
-                         this._toArray(el as any).forEach((v) => {
-                             result.push(convertDOM(v));
-                         });
-                     }
-                 },
-                 {
-                     predicate: () => this._isString(el),
-                     action: () => result = isArray(el) ? (<string[]>el).map((v) => Sizzle(v)).flat() : Sizzle(<string>el)
-                 },
-                 {
-                     predicate: () => this._isElement(el),
-                     action: () => result = isArray(el) ? el as Array<Element> : [el as Element]
-                 }
-             ]);
+            {
+                predicate: () =>
+                    this._isString(el) && this._isHTMLChar(el as any),
+                action: () => {
+                    this._toArray(el as any).forEach(v => {
+                        result.push(convertDOM(v));
+                    });
+                }
+            },
+            {
+                predicate: () => this._isString(el),
+                action: () =>
+                    (result = isArray(el)
+                        ? (<string[]>el).map(v => Sizzle(v)).flat()
+                        : Sizzle(<string>el))
+            },
+            {
+                predicate: () => this._isElement(el),
+                action: () =>
+                    (result = isArray(el)
+                        ? (el as Array<Element>)
+                        : [el as Element])
+            }
+        ]);
         return result;
     }
 
     private _isString(el: any | any[]): boolean {
-        if (typeof el === 'string') {
+        if (typeof el === "string") {
             return true;
         }
-        return isArray(el) && every(el, (v) => typeof v === 'string');
+        return isArray(el) && every(el, v => typeof v === "string");
     }
 
     private _isElement(el: any | any[]): boolean {
         if (isElement(el)) {
             return true;
         }
-        return isArray(el) && every(el, (v) => isElement(v));
+        return isArray(el) && every(el, v => isElement(v));
     }
 
     private _isHTMLChar(el: string | string[]): boolean {
-        if (typeof el === 'string' && hasHTMLChar(el)) {
+        if (typeof el === "string" && hasHTMLChar(el)) {
             return true;
         }
-        return isArray(el) && every(el, (v) => hasHTMLChar(v));
+        return isArray(el) && every(el, v => hasHTMLChar(v));
     }
 
     private _toArray<T>(el: T | T[]): T[] {
@@ -135,6 +170,18 @@ export class DOMObject {
 
     private _push(el: Element) {
         this._element.push(el);
+    }
+
+    public attr(key: string): string {
+        return this.first().getAttribute(key);
+    }
+
+    public attrs(): {[key: string]: string} {
+        const target = this.first();
+        return target.getAttributeNames().reduce((prev, v) => {
+            prev[v] = target.getAttribute(v);
+            return prev;
+        }, Object.create(null));
     }
 
     public forEach(predicate: (el: Element) => void): DOMObject {
@@ -147,7 +194,9 @@ export class DOMObject {
     }
 
     public end(): Element | undefined {
-        return this._element.length ? this._element[this._element.length - 1] : undefined;
+        return this._element.length
+            ? this._element[this._element.length - 1]
+            : undefined;
     }
 
     public toArray(): Element[] {

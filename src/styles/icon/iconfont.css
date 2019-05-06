@@ -1,16 +1,20 @@
 @font-face {
     font-family: "iconfont";
-    src: url("fonts/iconfont.woff?t=1556949882385") format("truetype");
+    src: url('fonts/iconfont.woff?t=1557150348347') format('woff'),
 }
 
 .iconfont {
-    font-family: "iconfont" !important;
-    font-size: 16px;
-    font-style: normal;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .icon-center:before {
     content: "\e631";
+}
+
+.icon-bold:before {
+    content: "\eb10";
 }
